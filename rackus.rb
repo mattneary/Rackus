@@ -5,7 +5,15 @@ class Match
     @rest = rest
   end
   def ==(a)
-    match == a
+    if match.kind_of?(Array) && match[1] && match[1].match.kind_of?(Array)
+      if !a.kind_of?(Array)
+        false
+      else
+        match[0] == a[0] && match[1] == a[1..-1]
+      end
+    else
+      match == a
+    end
   end
 end
 class Rackus
