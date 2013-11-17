@@ -22,7 +22,12 @@ class Rackus
         a ? a : x.read(string, @tokens)
       }
     elsif type == :const
-      string.start_with?(const) ? [const, string.sub(const, "")] : false 
+      if string.start_with?(const)
+        rest = string.sub(const, "")
+        [const].concat(rest == "" ? [] : [rest])
+      else
+        false 
+      end
     elsif type == :token
       tokens[name].read string
     elsif type == :join
