@@ -28,7 +28,13 @@ class Rackus
     elsif type == :join
       chop = parts[0].read(string, tokens)
       if chop
-        parts[1].read(chop, tokens)
+        rest = self.clone
+	rest.parts = parts[1..-1]
+	if rest.parts.length > 0
+	  rest.read(chop, tokens)
+	else
+	  chop
+	end
       else
         false
       end
