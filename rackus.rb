@@ -113,3 +113,13 @@ class Rackus
   end
 end
 
+def E(*args)
+  Rackus.enum(*args)
+end
+def J(*args)
+  Rackus.join(*args)
+end
+def T(*args)
+  Rackus.token(*args)
+end
+
