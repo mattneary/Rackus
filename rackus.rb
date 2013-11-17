@@ -11,7 +11,7 @@ class Rackus
       tokens[name].test string
     elsif type == :join
       parts[0].test(string[0], tokens) && parts[1].test(string[1], tokens)
-      read(string, tokens) == ""
+      read(string, tokens) != false
     else
       false
     end
