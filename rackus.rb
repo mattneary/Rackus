@@ -22,18 +22,24 @@ class Rackus
         a ? a : x.read(string, @tokens)
       }
     elsif type == :const
-      string.start_with?(const) ? string.sub(const, "") : false 
+      string.start_with?(const) ? [const, string.sub(const, "")] : false 
     elsif type == :token
       tokens[name].read string
     elsif type == :join
-      chop = parts[0].read(string, tokens)
+      read_head = parts[0].read(string, tokens)
+      chop = read_head ? read_head.last : false
       if chop
         rest = self.clone
 	rest.parts = parts[1..-1]
 	if rest.parts.length > 0
-	  rest.read(chop, tokens)
+	  tail = rest.read(chop, tokens)
+	  if tail
+	    [read_head.first].concat tail
+	  else
+	    false
+	  end
 	else
-	  chop
+	  [read_head.first]
 	end
       else
         false
