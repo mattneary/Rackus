@@ -37,6 +37,8 @@ class Rackus
   def read(string, tokens={}, prefix=false)
     if type == :enum
       parts.inject(false) { |a, x|
+        # TODO: this method of using only the first match will
+	#       not be sufficient. a tree-crawler will be needed.
         a ? a : x.read(string, @tokens == {} ? tokens : @tokens, prefix)
       }
     elsif type == :const
