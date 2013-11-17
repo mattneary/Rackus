@@ -1,7 +1,8 @@
 class Match
-  attr_accessor :match, :name
-  def initialize(match)
+  attr_accessor :match, :name, :rest
+  def initialize(match, rest=nil)
     @match = match
+    @rest = rest
   end
   def ==(a)
     match == a
@@ -25,7 +26,7 @@ class Rackus
       false
     end
   end
-  def read(string, tokens={})
+  def read(string, tokens={}, prefix=false)
     if type == :enum
       parts.inject(false) { |a, x|
         a ? a : x.read(string, @tokens)
@@ -33,7 +34,9 @@ class Rackus
     elsif type == :const
       if string.start_with?(const)
         rest = string.sub(const, "")
-        Match.new([const].concat(rest == "" ? [] : [rest]))
+        (rest != "" && !prefix) ? 
+	  false :  
+	  Match.new(const, rest == "" ? nil : rest)
       else
         false 
       end
@@ -46,20 +49,20 @@ class Rackus
         false
       end
     elsif type == :join
-      read_head = parts[0].read(string, tokens)
-      chop = read_head ? read_head.match.last : false
-      if chop
+      read_head = parts[0].read(string, tokens, true)
+      chop = read_head ? read_head.rest : false
+      if chop || parts.length == 1
         rest = self.clone
 	rest.parts = parts[1..-1]
 	if rest.parts.length > 0
-	  tail = rest.read(chop, tokens)
+	  tail = rest.read(chop, tokens, true)
 	  if tail
-	    Match.new([read_head.match.first].concat tail.match)
+	    Match.new([read_head, tail])
 	  else
 	    false
 	  end
 	else
-	  read_head.match[1] ? false : Match.new([read_head.match.first])
+	 read_head ? (read_head.rest == nil ? read_head : false) : false
 	end
       else
         false
