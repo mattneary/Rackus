@@ -113,13 +113,13 @@ class Rackus
   end
 end
 
-def E(*args)
+def Or(*args)
   Rackus.enum(*args)
 end
-def J(*args)
+def And(*args)
   Rackus.join(*args)
 end
-def T(*args)
+def Token(*args)
   Rackus.token(*args)
 end
 
