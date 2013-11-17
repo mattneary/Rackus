@@ -11,6 +11,27 @@ class Rackus
       tokens[name].test string
     elsif type == :join
       parts[0].test(string[0], tokens) && parts[1].test(string[1], tokens)
+      read(string, tokens) == ""
+    else
+      false
+    end
+  end
+  def read(string, tokens={})
+    if type == :enum
+      parts.inject(false) { |a, x|
+        a ? a : x.read(string, @tokens)
+      }
+    elsif type == :const
+      string.start_with?(const) ? string.sub(const, "") : false 
+    elsif type == :token
+      tokens[name].read string
+    elsif type == :join
+      chop = parts[0].read(string, tokens)
+      if chop
+        parts[1].read(chop, tokens)
+      else
+        false
+      end
     else
       false
     end
