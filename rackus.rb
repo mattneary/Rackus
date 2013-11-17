@@ -37,7 +37,7 @@ class Rackus
   def read(string, tokens={}, prefix=false)
     if type == :enum
       parts.inject(false) { |a, x|
-        a ? a : x.read(string, @tokens == {} ? tokens : @tokens)
+        a ? a : x.read(string, @tokens == {} ? tokens : @tokens, prefix)
       }
     elsif type == :const
       if string.start_with?(const)

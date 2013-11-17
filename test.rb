@@ -27,11 +27,11 @@ p string.read('ABC') == ['A', 'B', 'C']
 p string.test('AB') == false
 p string.test('ABCD') == false
 
-regular = And Token(:a), Token(:b)
+regular = And Token(:a), Token(:b), Token(:a)
 regular.register! :a, Rackus.const('A')
 regular.register! :b, (Or 'B', And('B', Token(:b)))
 
-p regular.test('AB') == true
+p regular.test('ABA') == true
 p regular.test('ABC') == false
 p regular.test('ACB') == false
 
