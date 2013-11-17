@@ -18,7 +18,8 @@ class Match
 end
 class Rackus
   attr_accessor :parts, :const, :type, :name, :tokens
-  def test(string, tokens={})
+  def test(string, tokens=nil)
+    tokens ||= @tokens || {}
     if type == :enum
       parts.inject(false) { |a, x|
         a || x.test(string, @tokens)
@@ -36,7 +37,7 @@ class Rackus
   def read(string, tokens={}, prefix=false)
     if type == :enum
       parts.inject(false) { |a, x|
-        a ? a : x.read(string, @tokens)
+        a ? a : x.read(string, @tokens == {} ? tokens : @tokens)
       }
     elsif type == :const
       if string.start_with?(const)
@@ -48,7 +49,7 @@ class Rackus
         false 
       end
     elsif type == :token
-      match = tokens[name].read string
+      match = tokens[name].read string, tokens, true
       if match
         match.name = name
 	match
