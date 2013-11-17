@@ -44,7 +44,7 @@ class Rackus
 	    false
 	  end
 	else
-	  [read_head.first]
+	  read_head[1] ? false : [read_head.first]
 	end
       else
         false
@@ -94,3 +94,4 @@ class Rackus
     @tokens[name] = token
   end
 end
+
