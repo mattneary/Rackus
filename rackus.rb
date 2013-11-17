@@ -1,3 +1,12 @@
+class Match
+  attr_accessor :match, :name
+  def initialize(match)
+    @match = match
+  end
+  def ==(a)
+    match == a
+  end
+end
 class Rackus
   attr_accessor :parts, :const, :type, :name, :tokens
   def test(string, tokens={})
@@ -24,27 +33,33 @@ class Rackus
     elsif type == :const
       if string.start_with?(const)
         rest = string.sub(const, "")
-        [const].concat(rest == "" ? [] : [rest])
+        Match.new([const].concat(rest == "" ? [] : [rest]))
       else
         false 
       end
     elsif type == :token
-      tokens[name].read string
+      match = tokens[name].read string
+      if match
+        match.name = name
+	match
+      else
+        false
+      end
     elsif type == :join
       read_head = parts[0].read(string, tokens)
-      chop = read_head ? read_head.last : false
+      chop = read_head ? read_head.match.last : false
       if chop
         rest = self.clone
 	rest.parts = parts[1..-1]
 	if rest.parts.length > 0
 	  tail = rest.read(chop, tokens)
 	  if tail
-	    [read_head.first].concat tail
+	    Match.new([read_head.match.first].concat tail.match)
 	  else
 	    false
 	  end
 	else
-	  read_head[1] ? false : [read_head.first]
+	  read_head.match[1] ? false : Match.new([read_head.match.first])
 	end
       else
         false

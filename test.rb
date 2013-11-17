@@ -4,7 +4,7 @@ simple = Rackus.join 'A', 'B'
 
 p simple.test('A') == false
 p simple.test('B') == false
-p simple.test('AB') == true
+p simple.test('AB') == true && simple.read('AB') == ["A", "B"]
 p simple.test('ACB') == false
 p simple.test('ABC') == false
 
