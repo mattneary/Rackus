@@ -20,3 +20,9 @@ p enum.read('AA') == ["A", "A"]
 p enum.test('AB') == false
 p enum.test('CB') == false
 
+string = And 'A', 'B', 'C'
+
+p string.test('ABC') == true
+p string.test('AB') == false
+p string.test('ABCD') == false
+

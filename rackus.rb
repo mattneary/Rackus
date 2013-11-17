@@ -20,7 +20,6 @@ class Rackus
     elsif type == :token
       tokens[name].test string
     elsif type == :join
-      parts[0].test(string[0], tokens) && parts[1].test(string[1], tokens)
       read(string, tokens) != false
     else
       false
@@ -101,9 +100,9 @@ class Rackus
     rack.type = :token
     rack
   end
-  def self.join(a, b)
+  def self.join(*parts)
     rack = self.new
-    rack.parts = self.make [a, b]
+    rack.parts = self.make parts
     rack.type = :join
     rack
   end
