@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Rackus by mattneary</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Rackus</h1>
+        <h2>Backus-Naur grammars for Ruby</h2>
+        <a href="https://github.com/mattneary/Rackus" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h2>
+<a name="introduction" class="anchor" href="#introduction"><span class="octicon octicon-link"></span></a>Introduction</h2>
+
+<p>Rackus allows Backus-Naur defined grammars to be tested and read
+in Ruby. Currently, a DSL is used to define these grammars. Eventually,
+it will become a self-hosted grammar parser which uses true BNF as input.</p>
+
+<h2>
+<a name="getting-started" class="anchor" href="#getting-started"><span class="octicon octicon-link"></span></a>Getting Started</h2>
+
+<p>Rackus is a lot like Regular Expressions, except more appropriate for
+parsers. Require the library to get started.</p>
+
+<div class="highlight highlight-ruby"><pre><span class="nb">require</span> <span class="s1">'./rackus.rb'</span>
+</pre></div>
+
+<p>Form an expression pattern using <code>And</code>, <code>Or</code>, and <code>Token</code> 
+(together with <code>Rackus#register!</code>). Here's a very basic example.</p>
+
+<div class="highlight highlight-ruby"><pre><span class="n">alphabeta</span> <span class="o">=</span> <span class="no">Or</span> <span class="s1">'A'</span><span class="p">,</span> <span class="s1">'B'</span>
+<span class="n">alphabeta</span><span class="o">.</span><span class="n">test</span> <span class="s1">'A'</span> <span class="c1"># =&gt; true</span>
+<span class="n">alphabeta</span><span class="o">.</span><span class="n">test</span> <span class="s1">'B'</span> <span class="c1"># =&gt; true</span>
+<span class="n">alphabeta</span><span class="o">.</span><span class="n">test</span> <span class="s1">'C'</span> <span class="c1"># =&gt; false</span>
+</pre></div>
+
+<p>More complicated expressions arise by use of recursion. Here is an example
+of this approach.</p>
+
+<div class="highlight highlight-ruby"><pre><span class="n">bs</span> <span class="o">=</span> <span class="no">Or</span> <span class="s1">'B'</span><span class="p">,</span> <span class="p">(</span><span class="no">And</span> <span class="s1">'B'</span><span class="p">,</span> <span class="no">Token</span><span class="p">(</span><span class="ss">:b</span><span class="p">))</span>
+<span class="n">bs</span><span class="o">.</span><span class="n">register!</span> <span class="ss">:b</span><span class="p">,</span> <span class="n">bs</span>
+
+<span class="n">bs</span><span class="o">.</span><span class="n">test</span> <span class="s1">'b'</span> <span class="c1"># =&gt; true</span>
+<span class="n">bs</span><span class="o">.</span><span class="n">test</span> <span class="s1">'bb'</span> <span class="c1"># =&gt; true</span>
+<span class="n">bs</span><span class="o">.</span><span class="n">test</span> <span class="s1">'bbbb'</span> <span class="c1"># =&gt; true</span>
+<span class="n">bs</span><span class="o">.</span><span class="n">test</span> <span class="s1">'bab'</span> <span class="c1"># =&gt; false</span>
+</pre></div>
+
+<h2>
+<a name="parsing" class="anchor" href="#parsing"><span class="octicon octicon-link"></span></a>Parsing</h2>
+
+<p>Rackus is not limited to RegEx-like testing. Rather, Rackus can be used
+to extract structure from strings. This is done by use of <code>Rackus#read</code>.
+Let's look at an example, in which we use Rackus to analyze a grammar.</p>
+
+<div class="highlight highlight-ruby"><pre><span class="n">sum</span> <span class="o">=</span> <span class="no">And</span> <span class="no">Token</span><span class="p">(</span><span class="ss">:bit</span><span class="p">),</span> <span class="no">Token</span><span class="p">(</span><span class="ss">:op</span><span class="p">),</span> <span class="no">Or</span><span class="p">(</span><span class="no">Token</span><span class="p">(</span><span class="ss">:sum</span><span class="p">),</span> <span class="no">Token</span><span class="p">(</span><span class="ss">:bit</span><span class="p">))</span>
+<span class="n">sum</span><span class="o">.</span><span class="n">register!</span> <span class="ss">:bit</span><span class="p">,</span> <span class="no">Or</span><span class="p">(</span><span class="s1">'0'</span><span class="p">,</span> <span class="s1">'1'</span><span class="p">)</span>
+<span class="n">sum</span><span class="o">.</span><span class="n">register!</span> <span class="ss">:op</span><span class="p">,</span> <span class="no">Or</span><span class="p">(</span><span class="s1">'+'</span><span class="p">,</span> <span class="s1">'*'</span><span class="p">,</span> <span class="s1">'-'</span><span class="p">)</span>
+<span class="n">sum</span><span class="o">.</span><span class="n">register!</span> <span class="ss">:sum</span><span class="p">,</span> <span class="n">sum</span>
+
+<span class="n">sum</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">'0+1'</span><span class="p">)</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="o">&amp;</span><span class="ss">:name</span><span class="p">)</span> <span class="o">==</span> <span class="o">[</span><span class="ss">:bit</span><span class="p">,</span> <span class="ss">:op</span><span class="p">,</span> <span class="ss">:bit</span><span class="o">]</span> <span class="c1"># =&gt; true</span>
+<span class="n">sum</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">'0+1+0'</span><span class="p">)</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="o">&amp;</span><span class="ss">:name</span><span class="p">)</span> <span class="o">==</span> <span class="o">[</span><span class="ss">:bit</span><span class="p">,</span> <span class="ss">:op</span><span class="p">,</span> <span class="ss">:bit</span><span class="o">]</span> <span class="c1"># =&gt; false</span>
+</pre></div>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/mattneary/Rackus/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/mattneary/Rackus/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/mattneary/Rackus"></a> is maintained by <a href="https://github.com/mattneary">mattneary</a>.</p>
+
+          <p>This page was generated by <a href="pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
