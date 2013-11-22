@@ -9,7 +9,7 @@ p simple.read('AB') == ['A', 'B']
 p simple.test('ACB') == false
 p simple.test('ABC') == false
 
-enum = Or 'A', And('A', Token(:enum))
+enum = Or 'A', (And 'A', (Token :enum))
 enum.register! :enum, enum
 
 p enum.test("C") == false
@@ -27,9 +27,9 @@ p string.read('ABC') == ['A', 'B', 'C']
 p string.test('AB') == false
 p string.test('ABCD') == false
 
-regular = And Token(:a), Token(:b), Token(:a)
-regular.register! :a, Rackus.const('A')
-regular.register! :b, (Or 'B', And('B', Token(:b)))
+regular = And (Token :a), (Token :b), (Token :a)
+regular.register! :a, (Rackus.const 'A')
+regular.register! :b, (Or 'B', (And 'B', (Token :b)))
 
 p regular.test('ABA') == true
 p regular.test('ABC') == false

@@ -25,7 +25,7 @@ More complicated expressions arise by use of recursion. Here is an example
 of this approach.
 
 ```ruby
-bs = Or 'B', (And 'B', Token(:b))
+bs = Or 'B', (And 'B', (Token :b))
 bs.register! :b, bs
 
 bs.test 'b' # => true
@@ -40,9 +40,9 @@ to extract structure from strings. This is done by use of `Rackus#read`.
 Let's look at an example, in which we use Rackus to analyze a grammar.
 
 ```ruby
-sum = And Token(:bit), Token(:op), Or(Token(:sum), Token(:bit))
-sum.register! :bit, Or('0', '1')
-sum.register! :op, Or('+', '*', '-')
+sum = And (Token :bit), (Token :op), (Or (Token :sum), (Token :bit))
+sum.register! :bit, (Or '0', '1')
+sum.register! :op, (Or '+', '*', '-')
 sum.register! :sum, sum
 
 sum.read('0+1').map(&:name) == [:bit, :op, :bit] # => true
