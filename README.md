@@ -41,8 +41,8 @@ Let's look at an example, in which we use Rackus to analyze a grammar.
 
 ```ruby
 sum = (Token :bit) + (Token :op) + ((Token :sum) | (Token :bit))
-sum.register! :bit, (Or '0', '1')
-sum.register! :op, (Or '+', '*', '-')
+sum.register! :bit, ((Const '0') | (Const '1'))
+sum.register! :op, ((Const '+') | (Const '*') | (Const '-'))
 sum.register! :sum, sum
 
 sum.read('0+1').map(&:name) == [:bit, :op, :bit] # => true
