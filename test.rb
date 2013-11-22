@@ -35,3 +35,13 @@ p regular.test('ABA') == true
 p regular.test('ABC') == false
 p regular.test('ACB') == false
 
+dslOr = (Rackus.const 'A') | (Rackus.const 'B') | (Rackus.const 'C')
+p dslOr.test('A') == true
+p dslOr.test('B') == true
+p dslOr.test('D') == false
+
+dslAnd = (Rackus.const 'A') + (Rackus.const 'B') + (Rackus.const 'C')
+p dslAnd.test('ABC') == true
+p dslAnd.test('ACB') == false
+p dslAnd.test('ABD') == false
+

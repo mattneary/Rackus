@@ -18,6 +18,22 @@ class Match
 end
 class Rackus
   attr_accessor :parts, :const, :type, :name, :tokens
+  def |(other)
+    if type == :enum
+      @parts.push other
+      self
+    else
+      (Or self, other)
+    end
+  end
+  def +(other)
+    if type == :join
+      @parts.push other
+      self
+    else
+      (And self, other)
+    end
+  end
   def test(string, tokens=nil)
     tokens ||= @tokens || {}
     if type == :enum
