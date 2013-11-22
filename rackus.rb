@@ -148,4 +148,7 @@ end
 def Token(*args)
   Rackus.token(*args)
 end
+def Const(c)
+  Rackus.const c
+end
 

@@ -15,7 +15,7 @@ Form an expression pattern using `And`, `Or`, and `Token`
 (together with `Rackus#register!`). Here's a very basic example.
 
 ```ruby
-alphabeta = Or 'A', 'B'
+alphabeta = (Const 'A') | (Const 'B')
 alphabeta.test 'A' # => true
 alphabeta.test 'B' # => true
 alphabeta.test 'C' # => false
@@ -25,7 +25,7 @@ More complicated expressions arise by use of recursion. Here is an example
 of this approach.
 
 ```ruby
-bs = Or 'B', (And 'B', (Token :b))
+bs = (Const 'B') | ((Const 'B') + (Token :b))
 bs.register! :b, bs
 
 bs.test 'b' # => true
@@ -40,7 +40,7 @@ to extract structure from strings. This is done by use of `Rackus#read`.
 Let's look at an example, in which we use Rackus to analyze a grammar.
 
 ```ruby
-sum = And (Token :bit), (Token :op), (Or (Token :sum), (Token :bit))
+sum = (Token :bit) + (Token :op) + ((Token :sum) | (Token :bit))
 sum.register! :bit, (Or '0', '1')
 sum.register! :op, (Or '+', '*', '-')
 sum.register! :sum, sum
