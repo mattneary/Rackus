@@ -17,7 +17,7 @@ class Match
   end
 end
 class Rackus
-  attr_accessor :parts, :const, :type, :name, :tokens
+  attr_accessor :parts, :const, :type, :name, :tokens, :match_found
   def |(other)
     if type == :enum
       @parts.push other
@@ -52,10 +52,16 @@ class Rackus
   end
   def read(string, tokens={}, prefix=false)
     if type == :enum
+      @match_found[parts] = false
       parts.inject(false) { |a, x|
         # TODO: this method of using only the first match will
 	#       not be sufficient. a tree-crawler will be needed.
-        a ? a : x.read(string, @tokens == {} ? tokens : @tokens, prefix)
+	if @match_found[parts]
+	  a
+	else
+	  @match_found[parts] = x.read(string, @tokens == {} ? tokens : @tokens, prefix)
+	  @match_found[parts]
+	end
       }
     elsif type == :const
       if string.start_with?(const)
@@ -99,6 +105,7 @@ class Rackus
   end
   def initialize
     @tokens = {}
+    @match_found = {}
   end
   def self.const(string)
     rack = self.new
@@ -150,5 +157,10 @@ def Token(*args)
 end
 def Const(c)
   Rackus.const c
+end
+def get_variable(name)
+  instance_name = name.to_s.prepend("@").to_sym
+  p instance_name
+  instance_variable_get(instance_name)
 end
 
