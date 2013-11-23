@@ -17,7 +17,7 @@ class Match
   end
 end
 class Rackus
-  attr_accessor :parts, :const, :type, :name, :tokens, :match_found
+  attr_accessor :parts, :const, :type, :name, :tokens
   def |(other)
     if type == :enum
       @parts.push other
@@ -33,6 +33,11 @@ class Rackus
     else
       (And self, other)
     end
+  end
+  def ~
+    chain = (Or self, (And self, (Token :chain)))
+    chain.register! :chain, chain
+    chain
   end
   def test(string, tokens=nil)
     tokens ||= @tokens || {}
@@ -52,15 +57,13 @@ class Rackus
   end
   def read(string, tokens={}, prefix=false)
     if type == :enum
-      @match_found[parts] = false
       parts.inject(false) { |a, x|
         # TODO: this method of using only the first match will
 	#       not be sufficient. a tree-crawler will be needed.
-	if @match_found[parts]
+	if a
 	  a
 	else
-	  @match_found[parts] = x.read(string, @tokens == {} ? tokens : @tokens, prefix)
-	  @match_found[parts]
+	  x.read(string, @tokens == {} ? tokens : @tokens, prefix)
 	end
       }
     elsif type == :const
@@ -105,7 +108,6 @@ class Rackus
   end
   def initialize
     @tokens = {}
-    @match_found = {}
   end
   def self.const(string)
     rack = self.new

@@ -1,4 +1,4 @@
-require '../rackus.rb'
+require './rackus.rb'
 
 describe Rackus, "#test" do
   it "verifies a basic constant" do
@@ -35,5 +35,14 @@ describe Rackus, "#test" do
     regular.test('ABA').should be true
     regular.test('ABC').should be false
     regular.test('ACB').should be false
+    # FAILS: regular.test('ABBA').should be true
+  end
+  it "verifies star quantifier" do
+    chain = ~(Const 'A')	
+    chain.test('A').should be true
+    chain.test('AB').should be false
+    chain.test('AA').should be true
+    chain.test('AAB').should be false
+    # FAILS: chain.test('AAA').should be true	
   end
 end
